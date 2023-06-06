@@ -48,15 +48,15 @@ io.on("connection", (socket) => {
   });
   
   socket.on("selfLocation", (arg) => {
-    socket.join(room);
-    io.sockets
-    .in(room)
-    .emit("connectedRoom", "You are connected to room: " + room);
-    capacity++;
-    if (capacity == 2) {
-      room++;
-      capacity = 0;
-    }
+    // socket.join(room);
+    // io.sockets
+    // .in(room)
+    // .emit("connectedRoom", "You are connected to room: " + room);
+    // capacity++;
+    // if (capacity == 2) {
+    //   room++;
+    //   capacity = 0;
+    // }
     
     // check if there is any space ship in the array
     if (spaceShips.length == 0) {

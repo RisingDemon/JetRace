@@ -56,16 +56,13 @@ function setup() {
 
   createCanvas(screenX, screenY);
 
+
   socket.on("updatedScore", (data) => {
-    // spaceShips[0].score = data.spaceShips[0].score;
-    // spaceShips[1].score = data.spaceShips[1].score;
 
     console.log(data);
     // spaceShips = data.spaceShips;
     score1 = data[0].score;
     score2 = data[1].score;
-    div1.html(score1);
-    div2.html(score2);
   });
   socket.on("winner", (arg) => {
     result = arg;
