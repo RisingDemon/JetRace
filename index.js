@@ -1,4 +1,3 @@
-
 import express from "express";
 import { Server } from "socket.io";
 const app = express();
@@ -14,16 +13,18 @@ let xposInitial = 1066 / 4;
 let yposInitial = 600 - 50;
 let x1posInitial = (3 * 1066) / 4;
 let y1posInitial = 600 - 50;
+let score1 = 0,score2 = 0;
 class ships {
-  constructor(id, name, x, y) {
+  constructor(id, room, name, x, y, score) {
     this.id = id;
+    this.room = room;
     this.name = name;
     this.x = x;
     this.y = y;
+    this.score = score;
   }
 }
 
-setInterval(generateno, 10000);
 function generateno() {
   let bullet = {
     bulX: 0,
@@ -35,54 +36,108 @@ function generateno() {
   io.sockets.emit("bullet", bullet);
 }
 
+var room = 1;
+var capacity = 0;
+
 io.on("connection", (socket) => {
   socket.emit("connectServer", "Hello from server");
-
+  
   console.log("a user connected" + socket.id);
   socket.on("Howdy", (arg) => {
     console.log(arg);
   });
-
+  
   socket.on("selfLocation", (arg) => {
+    socket.join(room);
+    io.sockets
+    .in(room)
+    .emit("connectedRoom", "You are connected to room: " + room);
+    capacity++;
+    if (capacity == 2) {
+      room++;
+      capacity = 0;
+    }
+    
     // check if there is any space ship in the array
     if (spaceShips.length == 0) {
+      console.log("in if");
       // create a new space ship
       let spaceShip = new ships(
         socket.id,
+        room,
         arg.name,
         xposInitial,
-        yposInitial
-      );
-      // add the space ship to the array
-      spaceShips.push(spaceShip);
+        yposInitial,
+        score1,
+        );
+        // add the space ship to the array
+        spaceShips.push(spaceShip);
+      }
+      // check if there is any space ship in the array
+      else if (spaceShips.length == 1) {
+        console.log("in else if");
+        let spaceShip = new ships(
+          socket.id,
+          room,
+          arg.name,
+          x1posInitial,
+          y1posInitial,
+          score2,
+          );
+          spaceShips.push(spaceShip);
+        }
+        
+        console.log(arg);
+        console.log(spaceShips);
+        if (spaceShips.length == 2) {
+          console.log("2 players connected");
+          io.emit("allLocations", spaceShips);
+          setInterval(generateno, 1000);
+        }
+      });
+      
+      socket.on("updateLocation", (arg) => {
+        console.log(arg);
+        for (let i = 0; i < spaceShips.length; i++) {
+          if (spaceShips[i].id == socket.id) {
+        spaceShips[i].x = arg.x;
+        spaceShips[i].y = arg.y;
+      }
     }
-    // check if there is any space ship in the array
-    else if (spaceShips.length == 1) {
-      let spaceShip = new ships(
-        socket.id,
-        arg.name,
-        x1posInitial,
-        y1posInitial
-      );
-      spaceShips.push(spaceShip);
-    }
-
-    console.log(arg);
-    console.log(spaceShips);
-    socket.emit("allLocations", spaceShips);
+    socket.broadcast.emit("updatedLocation", spaceShips);
   });
 
-  socket.on("score", (arg) => {
+  socket.on("finalScore", (arg) => {
     console.log(arg);
     clearInterval(generateno);
-    var serverScore1 = arg.player1;
-    var serverScore2 = arg.player2;
+    console.log(spaceShips);
+    console.log(spaceShips[0]);
+    var serverScore1 = spaceShips[0].score;
+    var serverScore2 =spaceShips[1].score;
+    for (let i = 0; i < spaceShips.length; i++) {
+      if (spaceShips[i].id == socket.id) {
+        spaceShips.splice(i, 1);
+      }
+    }
     if (serverScore1 > serverScore2) {
-      socket.emit("winner", "winner is: blue");
+      io.emit("winner", "Winner is: Blue..... BlueScore: "+serverScore1+" GreenScore: "+serverScore2);
     } else if (serverScore1 < serverScore2) {
-      socket.emit("winner", "winner is: green");
+      io.emit("winner", "Winner is: Green..... BlueScore: "+serverScore1+" GreenScore: "+serverScore2);
     } else {
-      socket.emit("winner", "draw");
+      io.emit("winner", "Draw..... BlueScore: "+serverScore1+" GreenScore: "+serverScore2);
     }
   });
+
+  socket.on("updateScore", (arg) => {
+    console.log("update score");
+    console.log(arg);
+    for (let i = 0; i < spaceShips.length; i++) {
+      if (spaceShips[i].id == socket.id) {
+        spaceShips[i].score = arg.score;
+      }
+    }
+    io.emit("updatedScore", spaceShips);
+    console.log(spaceShips);
+  }
+  );
 });

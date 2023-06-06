@@ -99,6 +99,7 @@ function draw() {
     y1pos += s;
   }
 
+  console.log("hello");
   for (let i = 0; i < bullets.length; i++) {
     circle(bullets[i].bulX, bullets[i].bulY, 10);
     bullets[i].bulX = bullets[i].bulX + bulSpeed;
