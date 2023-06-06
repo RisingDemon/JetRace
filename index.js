@@ -13,7 +13,7 @@ app.use(cors());
 const port = process.env.PORT || 3000;
 // const ipAddress = '127.0.0.1'; // Replace with the desired IP address
 const server = app.listen(port);
-console.log(`Starting server at http://${ipAddress}:${port}`);
+// console.log(`Starting server at http://localhost:${port}`);
 const io = new Server(server);
 
 
