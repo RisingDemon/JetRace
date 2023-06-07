@@ -56,6 +56,24 @@ function setup() {
 
   createCanvas(screenX, screenY);
 
+  socket.on("allLocations", (data) => {
+    spaceShips = data;
+    console.log(spaceShips);
+    if (spaceShips[0].name == yourName.value()) {
+      arrNo = 0;
+      shipNo2 = 1;
+    } else {
+      arrNo = 1;
+      shipNo2 = 0;
+    }
+    xposInitial = spaceShips[arrNo].x;
+    yposInitial = spaceShips[arrNo].y;
+
+    timeLine = setInterval(timeFun, 1000);
+    displayShip();
+    // button.mousePressed(displayShip);
+  });
+
 
   socket.on("updatedScore", (data) => {
 
@@ -73,7 +91,8 @@ function setup() {
 
   socket.on("playerLeft", (arg) => {
     alert("Player Left");
-    location.reload();
+    // location.reload();
+    waitForPeople();
   });
 
   startScreen();
@@ -111,23 +130,6 @@ function waitForPeople() {
   divWaiting.style("color", "black");
   console.log("waiting");
 
-  socket.on("allLocations", (data) => {
-    spaceShips = data;
-    console.log(spaceShips);
-    if (spaceShips[0].name == yourName.value()) {
-      arrNo = 0;
-      shipNo2 = 1;
-    } else {
-      arrNo = 1;
-      shipNo2 = 0;
-    }
-    xposInitial = spaceShips[arrNo].x;
-    yposInitial = spaceShips[arrNo].y;
-
-    timeLine = setInterval(timeFun, 1000);
-    displayShip();
-    // button.mousePressed(displayShip);
-  });
 }
 
 function updatePos(x, y) {
