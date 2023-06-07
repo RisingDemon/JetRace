@@ -71,6 +71,11 @@ function setup() {
     location.reload();
   });
 
+  socket.on("playerLeft", (arg) => {
+    alert("Player Left");
+    location.reload();
+  });
+
   startScreen();
 }
 
