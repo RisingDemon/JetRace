@@ -82,6 +82,11 @@ io.on("connection", (socket) => {
       );
       // add the space ship to the array
       spaceShips.push(spaceShip);
+      socket.emit("initialPos", {
+        id: spaceShip.id,
+        x: spaceShip.x,
+        y: spaceShip.y,
+      });
     }
     // check if there is any space ship in the array
     else if (spaceShips.length == 1) {
@@ -93,8 +98,13 @@ io.on("connection", (socket) => {
         x1posInitial,
         y1posInitial,
         score2
-      );
-      spaceShips.push(spaceShip);
+        );
+        spaceShips.push(spaceShip);
+        socket.emit("initialPos", {
+          id: spaceShip.id,
+          x: spaceShip.x,
+          y: spaceShip.y,
+        });
     }
 
     console.log(arg);

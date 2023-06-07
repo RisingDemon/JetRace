@@ -29,6 +29,7 @@ let i,
   check,
   triggerPoint = 0,
   newBullet;
+let myX, myY;
 
 function preload() {
   bimg = loadImage("./assets/fighter-jet.png"); //bluee
@@ -36,7 +37,10 @@ function preload() {
 }
 
 function setup() {
-  socket = io("https://jetrace.onrender.com");
+  // socket = io("https://jetrace.onrender.com");
+  socket = io();
+  io.connect();
+
   socket.on("connectServer", (arg) => {
     console.log("connected");
     console.log(arg);
@@ -69,16 +73,21 @@ function setup() {
       shipNo2 = 0;
     }
     xposInitial = spaceShips[arrNo].x;
-    yposInitial = spaceShips[arrNo].y;
+    yposInitial = myY;
 
     timeLine = setInterval(timeFun, 1000);
     displayShip();
     // button.mousePressed(displayShip);
   });
 
+  socket.on("initialPos", (data) => {
+    if(data.id == socket.id){
+      myX = data.x;
+      myY = data.y;
+    }
+  });
 
   socket.on("updatedScore", (data) => {
-
     console.log(data);
     // spaceShips = data.spaceShips;
     score1 = data[0].score;
@@ -131,7 +140,6 @@ function waitForPeople() {
   divWaiting.style("font-size", "36px");
   divWaiting.style("color", "black");
   console.log("waiting");
-
 }
 
 function updatePos(x, y) {
@@ -160,15 +168,37 @@ function updateScore(score) {
 function displayShip() {
   // removeElements();
   background(200);
-  push();
-  imageMode(CENTER);
-  image(bimg, spaceShips[0].x, spaceShips[0].y, 50, 50);
-  pop();
+  // push();
+  // imageMode(CENTER);
+  // image(bimg, spaceShips[0].x, spaceShips[0].y, 50, 50);
+  // pop();
 
-  push();
-  imageMode(CENTER);
-  image(gimg, spaceShips[1].x, spaceShips[1].y, 50, 50);
-  pop();
+  // push();
+  // imageMode(CENTER);
+  // image(gimg, spaceShips[1].x, spaceShips[1].y, 50, 50);
+  // pop();
+
+  if (arrNo == 0) {
+    push();
+    imageMode(CENTER);
+    image(bimg, myX, myY, 50, 50);
+    pop();
+
+    push();
+    imageMode(CENTER);
+    image(gimg, spaceShips[1].x, spaceShips[1].y, 50, 50);
+    pop();
+  } else {
+    push();
+    imageMode(CENTER);
+    image(gimg, myX, myY, 50, 50);
+    pop();
+
+    push();
+    imageMode(CENTER);
+    image(bimg, spaceShips[0].x, spaceShips[0].y, 50, 50);
+    pop();
+  }
 
   let div1 = createDiv("");
   let div2 = createDiv("");
@@ -205,20 +235,20 @@ function displayBullet() {
       dist(
         bullets[i].bulX,
         bullets[i].bulY,
-        spaceShips[arrNo].x,
-        spaceShips[arrNo].y
+        myX,
+        myY
       ) < 21 ||
       dist(
         bullets[i].bulXl,
         bullets[i].bulYl,
-        spaceShips[arrNo].x,
-        spaceShips[arrNo].y
+        myX,
+        myY
       ) < 21
     ) {
       //checks if the distance between the bullet and the plane1 is less than 21
       bullets.splice(i, 1);
-      spaceShips[arrNo].x = xposInitial;
-      spaceShips[arrNo].y = yposInitial;
+      myX = xposInitial;
+      myY = yposInitial;
       // console.log("collision");
       continue;
     }
@@ -250,39 +280,39 @@ function draw() {
       }
 
       if (keyIsDown(65)) {
-        if (spaceShips[arrNo].x < 50) {
-          spaceShips[arrNo].x = 50;
+        if (myX < 50) {
+          myX = 50;
         } else {
-          spaceShips[arrNo].x -= 4;
+          myX -= 4;
         }
-        updatePos(spaceShips[arrNo].x, spaceShips[arrNo].y);
+        updatePos(myX, myY);
       }
 
       if (keyIsDown(68)) {
-        if (spaceShips[arrNo].x > screenX / 2 - 50) {
-          spaceShips[arrNo].x = screenX / 2 - 50;
+        if (myX > screenX / 2 - 50) {
+          myX = screenX / 2 - 50;
         } else {
-          spaceShips[arrNo].x += 4;
+          myX += 4;
         }
-        updatePos(spaceShips[arrNo].x, spaceShips[arrNo].y);
+        updatePos(myX, myY);
       }
       if (keyIsDown(87)) {
-        if (spaceShips[arrNo].y <= 0) {
-          spaceShips[arrNo].y = screenY - 50;
+        if (myY <= 0) {
+          myY = screenY - 50;
           score1++;
           updateScore(score1);
         } else {
-          spaceShips[arrNo].y -= 4;
+          myY -= 4;
         }
-        updatePos(spaceShips[arrNo].x, spaceShips[arrNo].y);
+        updatePos(myX, myY);
       }
       if (keyIsDown(83)) {
-        if (spaceShips[arrNo].y >= screenY - 50) {
-          spaceShips[arrNo].y = screenY - 50;
+        if (myY >= screenY - 50) {
+          myY = screenY - 50;
         } else {
-          spaceShips[arrNo].y += 4;
+          myY += 4;
         }
-        updatePos(spaceShips[arrNo].x, spaceShips[arrNo].y);
+        updatePos(myX, myY);
       }
     }
     if (arrNo == 1) {
@@ -290,39 +320,39 @@ function draw() {
         alert("pause");
       }
       if (keyIsDown(65)) {
-        if (spaceShips[arrNo].x < screenX / 2 + 50) {
-          spaceShips[arrNo].x = screenX / 2 + 50;
+        if (myX < screenX / 2 + 50) {
+          myX = screenX / 2 + 50;
         } else {
-          spaceShips[arrNo].x -= 4;
+          myX -= 4;
         }
-        updatePos(spaceShips[arrNo].x, spaceShips[arrNo].y);
+        updatePos(myX, myY);
       }
 
       if (keyIsDown(68)) {
-        if (spaceShips[arrNo].x > screenX - 50) {
-          spaceShips[arrNo].x = screenX - 50;
+        if (myX > screenX - 50) {
+          myX = screenX - 50;
         } else {
-          spaceShips[arrNo].x += 4;
+          myX += 4;
         }
-        updatePos(spaceShips[arrNo].x, spaceShips[arrNo].y);
+        updatePos(myX, myY);
       }
       if (keyIsDown(87)) {
-        if (spaceShips[arrNo].y <= 0) {
-          spaceShips[arrNo].y = screenY - 50;
+        if (myY <= 0) {
+          myY = screenY - 50;
           score2++;
           updateScore(score2);
         } else {
-          spaceShips[arrNo].y -= 4;
+          myY -= 4;
         }
-        updatePos(spaceShips[arrNo].x, spaceShips[arrNo].y);
+        updatePos(myX, myY);
       }
       if (keyIsDown(83)) {
-        if (spaceShips[arrNo].y >= screenY - 50) {
-          spaceShips[arrNo].y = screenY - 50;
+        if (myY >= screenY - 50) {
+          myY = screenY - 50;
         } else {
-          spaceShips[arrNo].y += 4;
+          myY += 4;
         }
-        updatePos(spaceShips[arrNo].x, spaceShips[arrNo].y);
+        updatePos(myX, myY);
       }
     }
 
