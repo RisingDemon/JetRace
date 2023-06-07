@@ -382,8 +382,8 @@ function draw() {
       }
 
       if (keyIsDown(LEFT_ARROW)) {
-        if (myX < 50) {
-          myX = 50;
+        if (myX < screenX / 2 + 50) {
+          myX = screenX / 2 + 50;
         } else {
           myX -= 4;
         }
@@ -391,8 +391,8 @@ function draw() {
       }
 
       if (keyIsDown(RIGHT_ARROW)) {
-        if (myX > screenX / 2 - 50) {
-          myX = screenX / 2 - 50;
+        if (myX > screenX - 50) {
+          myX = screenX - 50;
         } else {
           myX += 4;
         }
@@ -401,15 +401,15 @@ function draw() {
       if (keyIsDown(UP_ARROW)) {
         if (myY <= 0) {
           myY = screenY - 50;
-          score1++;
-          updateScore(score1);
+          score2++;
+          updateScore(score2);
         } else {
           myY -= 4;
         }
         updatePos(myX, myY);
       }
       if (keyIsDown(DOWN_ARROW)) {
-        if (myY >= screenY - 50) {
+       if (myY >= screenY - 50) {
           myY = screenY - 50;
         } else {
           myY += 4;
