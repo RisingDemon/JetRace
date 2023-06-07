@@ -43,6 +43,8 @@ function setup() {
   });
   socket.emit("Howdy", "Hello from client");
 
+  frameRate(24);
+
   socket.on("bullet", (data) => {
     newBullet = data;
     // console.log(newBullet);
