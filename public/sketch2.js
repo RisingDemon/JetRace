@@ -36,7 +36,7 @@ function preload() {
 }
 
 function setup() {
-  socket = io("https://jetrace.onrender.com:10000");
+  socket = io("https://jetrace.onrender.com");
   socket.on("connectServer", (arg) => {
     console.log("connected");
     console.log(arg);
