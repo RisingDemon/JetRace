@@ -81,7 +81,7 @@ function setup() {
   });
 
   socket.on("initialPos", (data) => {
-    if(data.id == socket.id){
+    if (data.id == socket.id) {
       myX = data.x;
       myY = data.y;
     }
@@ -232,18 +232,8 @@ function displayBullet() {
       continue;
     }
     if (
-      dist(
-        bullets[i].bulX,
-        bullets[i].bulY,
-        myX,
-        myY
-      ) < 21 ||
-      dist(
-        bullets[i].bulXl,
-        bullets[i].bulYl,
-        myX,
-        myY
-      ) < 21
+      dist(bullets[i].bulX, bullets[i].bulY, myX, myY) < 21 ||
+      dist(bullets[i].bulXl, bullets[i].bulYl, myX, myY) < 21
     ) {
       //checks if the distance between the bullet and the plane1 is less than 21
       bullets.splice(i, 1);
@@ -314,6 +304,42 @@ function draw() {
         }
         updatePos(myX, myY);
       }
+
+      if (keyIsDown(LEFT_ARROW)) {
+        if (myX < 50) {
+          myX = 50;
+        } else {
+          myX -= 4;
+        }
+        updatePos(myX, myY);
+      }
+
+      if (keyIsDown(RIGHT_ARROW)) {
+        if (myX > screenX / 2 - 50) {
+          myX = screenX / 2 - 50;
+        } else {
+          myX += 4;
+        }
+        updatePos(myX, myY);
+      }
+      if (keyIsDown(UP_ARROW)) {
+        if (myY <= 0) {
+          myY = screenY - 50;
+          score1++;
+          updateScore(score1);
+        } else {
+          myY -= 4;
+        }
+        updatePos(myX, myY);
+      }
+      if (keyIsDown(DOWN_ARROW)) {
+        if (myY >= screenY - 50) {
+          myY = screenY - 50;
+        } else {
+          myY += 4;
+        }
+        updatePos(myX, myY);
+      }
     }
     if (arrNo == 1) {
       if (keyIsDown(32)) {
@@ -347,6 +373,42 @@ function draw() {
         updatePos(myX, myY);
       }
       if (keyIsDown(83)) {
+        if (myY >= screenY - 50) {
+          myY = screenY - 50;
+        } else {
+          myY += 4;
+        }
+        updatePos(myX, myY);
+      }
+
+      if (keyIsDown(LEFT_ARROW)) {
+        if (myX < 50) {
+          myX = 50;
+        } else {
+          myX -= 4;
+        }
+        updatePos(myX, myY);
+      }
+
+      if (keyIsDown(RIGHT_ARROW)) {
+        if (myX > screenX / 2 - 50) {
+          myX = screenX / 2 - 50;
+        } else {
+          myX += 4;
+        }
+        updatePos(myX, myY);
+      }
+      if (keyIsDown(UP_ARROW)) {
+        if (myY <= 0) {
+          myY = screenY - 50;
+          score1++;
+          updateScore(score1);
+        } else {
+          myY -= 4;
+        }
+        updatePos(myX, myY);
+      }
+      if (keyIsDown(DOWN_ARROW)) {
         if (myY >= screenY - 50) {
           myY = screenY - 50;
         } else {
